@@ -1,6 +1,7 @@
 import pandas as pd
 from utils import Enroll, Apply, Admit
 
+
 # This is a sample Python script.
 
 # Press ⌃R to execute it or replace it with your code.
@@ -28,10 +29,9 @@ if __name__ == '__main__':
     PATH_yield_output = "output/yield_JY.csv"
     PATH_convert_output = "output/convert_JY.csv"
 
-    enroll = Enroll() ## initiate a class with the functions for the enrollment data analysis
-    apply = Apply() ## initiate a class with the functions for the conversion (applied to admitted) analysis
-    admit = Admit() ## initiate a class with the functions for the yeild (admitted to enrolled) analysis
-
+    enroll = Enroll()  ## initiate a class with the functions for the enrollment data analysis
+    apply = Apply()  ## initiate a class with the functions for the conversion (applied to admitted) analysis
+    admit = Admit()  ## initiate a class with the functions for the yeild (admitted to enrolled) analysis
 
     enroll_df_raw = enroll.import_data(PATH_enrollment_2015to2021, "Sheet1")
     enroll_df_cleaned = enroll.clean_data(enroll_df_raw)
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     enroll_df.to_csv(PATH_enrollment_output)  ## output the total enrollment data with added columns
 
     enroll_track_df = enroll.track(enroll_df)
-    enroll_track_df.to_csv(PATH_enrollment_track_output) ## output the term by term tracking data of enrollment
+    enroll_track_df.to_csv(PATH_enrollment_track_output)  ## output the term by term tracking data of enrollment
 
     apply_df_raw = apply.import_data(PATH_application_2015to2021, "Sheet1")
     apply_df = apply.clean_data(apply_df_raw)
@@ -50,5 +50,4 @@ if __name__ == '__main__':
     yield_df.to_csv(PATH_yield_output)  ## output the yield data
 
     convert_df = apply.converts(apply_df, yield_df)
-    convert_df.to_csv(PATH_convert_output) ## output the convert data
-
+    convert_df.to_csv(PATH_convert_output)  ## output the convert data

@@ -373,12 +373,20 @@ class Admit:
 
     def map_column_values(self, df):
         """
-        map the values from numerical to characters for regstat, matstat, attstat, gender, citizen
+        map the values
         :param df: data in pandas dataframe format.
         :return: dataframe with column values decoded.
         """
         df["Gender"].fillna("Not Provided", inplace=True)
         df['Citz'] = df['Citz'].map({"USA": "domestic", "Intl": "international"})
+        df['Department'] = df['Department'].map({
+            "Office of the Dean (CCS)": "Undeclared",
+            "Information Technology": "Information Technology, Information Systems, Informatics",
+            "*Information Systems": "Information Technology, Information Systems, Informatics",
+            "Information Systems": "Information Technology, Information Systems, Informatics",
+            "Informatics": "Information Technology, Information Systems, Informatics",
+            "Computer Science": "Computer Science"
+            })
         return df
 
     def clean_data(self, df):
@@ -455,7 +463,7 @@ class Apply:
 
     def map_column_values(self, df):
         """
-        map the values from numerical to characters for regstat, matstat, attstat, gender, citizen
+        map the values
         :param df: data in pandas dataframe format.
         :return: dataframe with column values decoded.
         """
@@ -466,7 +474,9 @@ class Apply:
             "Information Technology": "Information Technology, Information Systems, Informatics",
             "*Information Systems": "Information Technology, Information Systems, Informatics",
             "Information Systems": "Information Technology, Information Systems, Informatics",
-            "Informatics": "Information Technology, Information Systems, Informatics"})
+            "Informatics": "Information Technology, Information Systems, Informatics",
+            "Computer Science": "Computer Science"
+            })
         return df
 
     def clean_data(self, df):
