@@ -29,8 +29,8 @@ if __name__ == '__main__':
     PATH_convert_output = "output/convert_JY.csv"
 
     enroll = Enroll() ## initiate a class with the functions for the enrollment data analysis
-    apply = Apply() ## initiate a class with the functions for the yield (applied to admitted) analysis
-    admit = Admit() ## initiate a class with the functions for the Conversion (admitted to enrolled) analysis
+    apply = Apply() ## initiate a class with the functions for the conversion (applied to admitted) analysis
+    admit = Admit() ## initiate a class with the functions for the yeild (admitted to enrolled) analysis
 
 
     enroll_df_raw = enroll.import_data(PATH_enrollment_2015to2021, "Sheet1")
