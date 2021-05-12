@@ -232,7 +232,7 @@ class Enroll:
     def track(self, df):
         """
         :param df: df_enroll dataframe
-        :return:
+        :return: the df_track tracks the semester_end_status for freshmen and transfer students
         """
         dictdf = self.dfDict("Semester_index", df)
         df_track = pd.DataFrame()
@@ -248,6 +248,10 @@ class Enroll:
         return df_track
 
     def semester_month(self, semester):
+        """
+        :param semester: string: "F2015", "Sp2016", "Su2018"
+        :return: the months it takes to complete a semester.
+        """
         season = semester[:-4]
         if season == "F":
             month = 4
