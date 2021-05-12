@@ -79,7 +79,7 @@ class Enroll:
         df['Gender'] = df['Gender'].map({1: "male", 2: "female"})
         df["Gender"].fillna("Not Provided", inplace=True)
         df['Citizen'] = df['Citizen'].map({1: "domestic", 2: "international", 3: "domestic"})
-        df['ClassDeliver'].fillna("Offline", inplace = True)
+        df['ClassDeliver'].fillna("Offline", inplace=True)
         return df
 
     def drop_columns(self, df):
@@ -87,7 +87,8 @@ class Enroll:
         :param df: data in pandas dataframe format.
         :return: dataframe that exclude sensitive information (i.e. name and legal country)
         """
-        df.drop(["URM", 'MI', "SID", 'EMAIL', 'FIRST_NAME', 'Last_name', 'Legal_Country', 'Reten'], axis=1, inplace=True)
+        df.drop(["URM", 'MI', "SID", 'EMAIL', 'FIRST_NAME', 'Last_name', 'Legal_Country', 'Reten'], axis=1,
+                inplace=True)
         return df
 
     def clean_data(self, df):
@@ -149,7 +150,8 @@ class Enroll:
             if deg_id not in exist_start_semester:
                 exist_start_semester[deg_id] = row['Semester']
                 exist_start_semester_index[deg_id] = row['Semester_index']
-                if row['Registration Status'] in ["freshmen", "transfer"]:  ## first record of regstat only take freshmen, transfer
+                if row['Registration Status'] in ["freshmen",
+                                                  "transfer"]:  ## first record of regstat only take freshmen, transfer
                     semester_registration_status.append(row['Registration Status'])
                     exist_start_semester_status[deg_id] = row['Registration Status']
                 else:
@@ -213,7 +215,7 @@ class Enroll:
         replacements = ["dropout"] * len(indexes)
         for (index, replacement) in zip(indexes, replacements):
             dropout_real[index] = replacement
-        df.drop("dropout", axis=1) ### delete the old dropout column and attach the real dropout column
+        df.drop("dropout", axis=1)  ### delete the old dropout column and attach the real dropout column
         df["dropout"] = dropout_real
 
         ### create semseter end status column by combining the data from graudate and dropout columns.
@@ -299,7 +301,8 @@ class Enroll:
             else:
                 status.append(row["Semester end status"])
 
-        d11d22.drop(["Semester end status", "Semester end status_new", "Semester", "Semester_index", "Degree months"], axis=1, inplace=True)
+        d11d22.drop(["Semester end status", "Semester end status_new", "Semester", "Semester_index", "Degree months"],
+                    axis=1, inplace=True)
         d11d22["Semester end status"] = status
         d11d22["Semester"] = semester
         d11d22["Semester_index"] = semester_index
@@ -333,7 +336,7 @@ class Admit:
         yields = []
         start_semester_status = []
         for index, row in admit_df.iterrows():
-            student_id = str(row["PIDM"]) ### use the PIDM column in admmission data to match with ids from Enrollment data
+            student_id = str(row["id"])
             if student_id in id_start_semester_status:
                 yields.append("yield")
                 start_semester_status.append(id_start_semester_status[student_id])
@@ -344,6 +347,50 @@ class Admit:
         yield_df["Yield"] = yields
         yield_df["Start semester status"] = start_semester_status
         return yield_df
+
+    def drop_columns(self, df):
+        """
+        :param df: data in pandas dataframe format.
+        :return: dataframe that exclude sensitive information (i.e. SID and legal country)
+        """
+        df.drop(["SID", "Legal_Country"], axis=1, inplace=True)
+        return df
+
+    def rename_columns(self, df):
+        """
+        rename columns
+        :param df: data in pandas dataframe format.
+        :return: dataframe with formatted column names.
+        """
+        df.rename(columns={
+            "deg": "Degree Type",
+            "PIDM": "id",
+            "ClassDeliver": "Delivery Mode",
+            "Citz": "Citizen"
+        }, inplace=True)
+
+        return df
+
+    def map_column_values(self, df):
+        """
+        map the values from numerical to characters for regstat, matstat, attstat, gender, citizen
+        :param df: data in pandas dataframe format.
+        :return: dataframe with column values decoded.
+        """
+        df["Gender"].fillna("Not Provided", inplace=True)
+        df['Citz'] = df['Citz'].map({"USA": "domestic", "Intl": "international"})
+        return df
+
+    def clean_data(self, df):
+        """
+        :param df: data from the excel or csv in pandas dataframe format.
+        :return: dataframe after cleaning.
+        """
+        df_columns_mapped = self.map_column_values(df)
+        df_columns_named = self.rename_columns(df_columns_mapped)
+        df_cleaned = self.drop_columns(df_columns_named)
+        return df_cleaned
+
 
 class Apply:
     def import_data(self, PATH, SheetName):
@@ -364,14 +411,14 @@ class Apply:
         """
         id_start_semester_status = {}
         for row_index, row in yield_df.iterrows():
-            student_id = str(row['PIDM']) ### use the PIDM column in yeild data
+            student_id = str(row["id"])
             if student_id not in id_start_semester_status:
                 id_start_semester_status[student_id] = row["Start semester status"]
 
         converts = []
         start_semester_status = []
         for index, row in apply_df.iterrows():
-            student_id = str(row["PIDM"]) ### use the PIDM column in application data to match with PIDM from yield data
+            student_id = str(row["id"])
             if student_id in id_start_semester_status:
                 converts.append("converted")
                 start_semester_status.append(id_start_semester_status[student_id])
@@ -382,4 +429,53 @@ class Apply:
         converted_df["Converted"] = converts
         converted_df["Start semester status"] = start_semester_status
         return converted_df
+
+    def drop_columns(self, df):
+        """
+        :param df: data in pandas dataframe format.
+        :return: dataframe that exclude sensitive information (i.e. SID and legal country)
+        """
+        df.drop(["SID", "Legal_Country", "URM"], axis=1, inplace=True)
+        return df
+
+    def rename_columns(self, df):
+        """
+        rename columns
+        :param df: data in pandas dataframe format.
+        :return: dataframe with formatted column names.
+        """
+        df.rename(columns={
+            "Degree": "Degree Type",
+            "PIDM": "id",
+            "ClassDeliver": "Delivery Mode",
+            "Citz": "Citizen"
+        }, inplace=True)
+
+        return df
+
+    def map_column_values(self, df):
+        """
+        map the values from numerical to characters for regstat, matstat, attstat, gender, citizen
+        :param df: data in pandas dataframe format.
+        :return: dataframe with column values decoded.
+        """
+        df["Gender"].fillna("Not Provided", inplace=True)
+        df['Citz'] = df['Citz'].map({"USA": "domestic", "Intl": "international"})
+        df['Department'] = df['Department'].map({
+            "Office of the Dean (CCS)": "Undeclared",
+            "Information Technology": "Information Technology, Information Systems, Informatics",
+            "*Information Systems": "Information Technology, Information Systems, Informatics",
+            "Information Systems": "Information Technology, Information Systems, Informatics",
+            "Informatics": "Information Technology, Information Systems, Informatics"})
+        return df
+
+    def clean_data(self, df):
+        """
+        :param df: data from the excel or csv in pandas dataframe format.
+        :return: dataframe after cleaning.
+        """
+        df_columns_mapped = self.map_column_values(df)
+        df_columns_named = self.rename_columns(df_columns_mapped)
+        df_cleaned = self.drop_columns(df_columns_named)
+        return df_cleaned
 

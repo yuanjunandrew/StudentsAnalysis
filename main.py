@@ -41,8 +41,10 @@ if __name__ == '__main__':
     enroll_track_df = enroll.track(enroll_df)
     enroll_track_df.to_csv(PATH_enrollment_track_output) ## output the term by term tracking data of enrollment
 
-    apply_df = apply.import_data(PATH_application_2015to2021, "Sheet1")
-    admit_df = admit.import_data(PATH_admission_2015to2021, "Sheet1")
+    apply_df_raw = apply.import_data(PATH_application_2015to2021, "Sheet1")
+    apply_df = apply.clean_data(apply_df_raw)
+    admit_df_raw = admit.import_data(PATH_admission_2015to2021, "Sheet1")
+    admit_df = admit.clean_data(admit_df_raw)
 
     yield_df = admit.yields(admit_df, enroll_df)
     yield_df.to_csv(PATH_yield_output)  ## output the yield data
