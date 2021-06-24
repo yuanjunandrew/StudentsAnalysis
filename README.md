@@ -40,5 +40,5 @@ The /output folder includes
 
 The output csv files are used to generate visualizations in Tableau public [Demo](https://public.tableau.com/app/profile/jun.yuan3070/viz/StudentAnalysisJun242021/EnrollmentTotalandProportion)
 
-To update the visualization, one can download the visualizations from the Demo link and update the output csv files.
+To update the visualization, one can download the Tableau workbook from the Demo link and update the output csv files.
 
